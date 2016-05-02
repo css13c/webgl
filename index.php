@@ -8,8 +8,8 @@
 		<!-- 
 			To do list:
 			In order of priority:
-			
-			Alex: Render object, change variable on pickup
+
+			Alex: Render object, change variable on pickup, different textures per floor
 			Connor: change maze, make ramp, get collision
 		-->
 
@@ -94,6 +94,7 @@
 			}
 
 			var gl;
+			var checkY = 1;
 
 			function initGL(canvas) {
 				try {
@@ -251,9 +252,10 @@
 			var yaw = 0;
 			var yawRate = 0;
 
-			var xPos = 0;
+			var xPos = 4.5;
 			var yPos = 0.4;
-			var zPos = 0;
+			var zPos = 3;
+			var jogConstant = 0.4;
 
 			var speed = 0;
 
@@ -319,22 +321,22 @@
 				var vertexTextureCoords = [];
 				
 				
-			for(var h=1; h<5; h++)
+			for(var k=1; k <= maze["h"]; k++)
 			{
 				for(var i=0; i < maze["r"]; i++) 
 				{
 					for(var j=0; j < maze["c"]; j++)
 					{
-						currentTile=maze[i][j]; //assoc array. "p" = passable (true/false), "t" = tile (img location)
+						currentTile=maze[k][i][j]; //assoc array. "p" = passable (true/false), "t" = tile (img location)
 						
 						//============================
 						//
 						//			Front
 						//
 						//============================
-						if(i==maze["r"]-1 || (maze[i][j]["p"] == "true" && maze[i+1][j]["p"] == "false") || (maze[i][j]["p"] == "false" && maze[i+1][j]["p"] == "true"))//if outer loop is one from completion, 
+						if(i==maze["r"]-1 || (maze[k][i][j]["p"] == "true" && maze[k][i+1][j]["p"] == "false") || (maze[k][i][j]["p"] == "false" && maze[k][i+1][j]["p"] == "true"))//if outer loop is one from completion, 
 						{
-							if(i==maze["r"]-1 && typeof maze[i][j]["l"] !== 'undefined') //link to the next map, don't draw exit.
+							if(i==maze["r"]-1 && typeof maze[k][i][j]["l"] !== 'undefined') //link to the next map, don't draw exit.
 							{ }
 							else
 							{
@@ -344,19 +346,19 @@
 							//
 							//============================
 							vertexPositions.push(parseFloat(j)); // X
-							vertexPositions.push(parseFloat(h)); // Y
+							vertexPositions.push(parseFloat(k)); // Y
 							vertexPositions.push(parseFloat((i*-1)-1)); // Z
 							vertexTextureCoords.push(parseFloat(0.0)); // U
 							vertexTextureCoords.push(parseFloat(1.0)); // V
 							
 							vertexPositions.push(parseFloat(j)); // X
-							vertexPositions.push(parseFloat(h-1)); // Y
+							vertexPositions.push(parseFloat(k-1)); // Y
 							vertexPositions.push(parseFloat((i*-1)-1)); // Z
 							vertexTextureCoords.push(parseFloat(0.0)); // U
 							vertexTextureCoords.push(parseFloat(0.0)); // V
 							
 							vertexPositions.push(parseFloat(j+1)); // X
-							vertexPositions.push(parseFloat(h-1)); // Y
+							vertexPositions.push(parseFloat(k-1)); // Y
 							vertexPositions.push(parseFloat((i*-1)-1)); // Z
 							vertexTextureCoords.push(parseFloat(1.0)); // U
 							vertexTextureCoords.push(parseFloat(0.0)); // V
@@ -369,19 +371,19 @@
 							//
 							//============================
 							vertexPositions.push(parseFloat(j)); // X
-							vertexPositions.push(parseFloat(h)); // Y
+							vertexPositions.push(parseFloat(k)); // Y
 							vertexPositions.push(parseFloat((i*-1)-1)); // Z
 							vertexTextureCoords.push(parseFloat(0.0)); // U
 							vertexTextureCoords.push(parseFloat(1.0)); // V
 							
 							vertexPositions.push(parseFloat(j+1)); // X
-							vertexPositions.push(parseFloat(h)); // Y
+							vertexPositions.push(parseFloat(k)); // Y
 							vertexPositions.push(parseFloat((i*-1)-1)); // Z
 							vertexTextureCoords.push(parseFloat(1.0)); // U
 							vertexTextureCoords.push(parseFloat(1.0)); // V
 							
 							vertexPositions.push(parseFloat(j+1)); // X
-							vertexPositions.push(parseFloat(h-1)); // Y
+							vertexPositions.push(parseFloat(k-1)); // Y
 							vertexPositions.push(parseFloat((i*-1)-1)); // Z
 							vertexTextureCoords.push(parseFloat(1.0)); // U
 							vertexTextureCoords.push(parseFloat(0.0)); // V
@@ -395,7 +397,7 @@
 						//			Left
 						//
 						//============================
-						if(j==0 && typeof maze[i][j]["l"] === 'undefined')
+						if(j==0 && typeof maze[k][i][j]["l"] === 'undefined')
 						{
 							//============================
 							//
@@ -403,19 +405,19 @@
 							//
 							//============================
 							vertexPositions.push(parseFloat(j)); // X
-							vertexPositions.push(parseFloat(h)); // Y
+							vertexPositions.push(parseFloat(k)); // Y
 							vertexPositions.push(parseFloat(i*-1)); // Z
 							vertexTextureCoords.push(parseFloat(0.0)); // U
 							vertexTextureCoords.push(parseFloat(1.0)); // V
 							
 							vertexPositions.push(parseFloat(j)); // X
-							vertexPositions.push(parseFloat(h-1)); // Y
+							vertexPositions.push(parseFloat(k-1)); // Y
 							vertexPositions.push(parseFloat(i*-1)); // Z
 							vertexTextureCoords.push(parseFloat(0.0)); // U
 							vertexTextureCoords.push(parseFloat(0.0)); // V
 							
 							vertexPositions.push(parseFloat(j)); // X
-							vertexPositions.push(parseFloat(h-1)); // Y
+							vertexPositions.push(parseFloat(k-1)); // Y
 							vertexPositions.push(parseFloat((i*-1)-1)); // Z
 							vertexTextureCoords.push(parseFloat(1.0)); // U
 							vertexTextureCoords.push(parseFloat(0.0)); // V
@@ -428,19 +430,19 @@
 							//
 							//============================
 							vertexPositions.push(parseFloat(j)); // X
-							vertexPositions.push(parseFloat(h)); // Y
+							vertexPositions.push(parseFloat(k)); // Y
 							vertexPositions.push(parseFloat(i*-1)); // Z
 							vertexTextureCoords.push(parseFloat(0.0)); // U
 							vertexTextureCoords.push(parseFloat(1.0)); // V
 							
 							vertexPositions.push(parseFloat(j)); // X
-							vertexPositions.push(parseFloat(h)); // Y
+							vertexPositions.push(parseFloat(k)); // Y
 							vertexPositions.push(parseFloat((i*-1)-1)); // Z
 							vertexTextureCoords.push(parseFloat(1.0)); // U
 							vertexTextureCoords.push(parseFloat(1.0)); // V
 							
 							vertexPositions.push(parseFloat(j)); // X
-							vertexPositions.push(parseFloat(h-1)); // Y
+							vertexPositions.push(parseFloat(k-1)); // Y
 							vertexPositions.push(parseFloat((i*-1)-1)); // Z
 							vertexTextureCoords.push(parseFloat(1.0)); // U
 							vertexTextureCoords.push(parseFloat(0.0)); // V
@@ -454,7 +456,7 @@
 						//			Back
 						//
 						//============================
-						if(i==0 && typeof maze[i][j]["l"] === 'undefined') 
+						if(i==0 && typeof maze[k][i][j]["l"] === 'undefined') 
 						{
 							//============================
 							//
@@ -462,19 +464,19 @@
 							//
 							//============================
 							vertexPositions.push(parseFloat(j)); // X
-							vertexPositions.push(parseFloat(h)); // Y
+							vertexPositions.push(parseFloat(k)); // Y
 							vertexPositions.push(parseFloat(i*-1)); // Z
 							vertexTextureCoords.push(parseFloat(0.0)); // U
 							vertexTextureCoords.push(parseFloat(1.0)); // V
 							
 							vertexPositions.push(parseFloat(j)); // X
-							vertexPositions.push(parseFloat(h-1)); // Y
+							vertexPositions.push(parseFloat(k-1)); // Y
 							vertexPositions.push(parseFloat(i*-1)); // Z
 							vertexTextureCoords.push(parseFloat(0.0)); // U
 							vertexTextureCoords.push(parseFloat(0.0)); // V
 							
 							vertexPositions.push(parseFloat(j+1)); // X
-							vertexPositions.push(parseFloat(h-1)); // Y
+							vertexPositions.push(parseFloat(k-1)); // Y
 							vertexPositions.push(parseFloat(i*-1)); // Z
 							vertexTextureCoords.push(parseFloat(1.0)); // U
 							vertexTextureCoords.push(parseFloat(0.0)); // V
@@ -487,19 +489,19 @@
 							//
 							//============================
 							vertexPositions.push(parseFloat(j)); // X
-							vertexPositions.push(parseFloat(h)); // Y
+							vertexPositions.push(parseFloat(k)); // Y
 							vertexPositions.push(parseFloat(i*-1)); // Z
 							vertexTextureCoords.push(parseFloat(0.0)); // U
 							vertexTextureCoords.push(parseFloat(1.0)); // V
 							
 							vertexPositions.push(parseFloat(j+1)); // X
-							vertexPositions.push(parseFloat(h)); // Y
+							vertexPositions.push(parseFloat(k)); // Y
 							vertexPositions.push(parseFloat(i*-1)); // Z
 							vertexTextureCoords.push(parseFloat(1.0)); // U
 							vertexTextureCoords.push(parseFloat(1.0)); // V
 							
 							vertexPositions.push(parseFloat(j+1)); // X
-							vertexPositions.push(parseFloat(h-1)); // Y
+							vertexPositions.push(parseFloat(k-1)); // Y
 							vertexPositions.push(parseFloat(i*-1)); // Z
 							vertexTextureCoords.push(parseFloat(1.0)); // U
 							vertexTextureCoords.push(parseFloat(0.0)); // V
@@ -513,9 +515,9 @@
 						//			Right
 						//
 						//============================
-						if(j==maze["c"]-1 || (maze[i][j]["p"] == "true" && maze[i][j+1]["p"] == "false") || (maze[i][j]["p"] == "false" && maze[i][j+1]["p"] == "true"))
+						if(j==maze["c"]-1 || (maze[k][i][j]["p"] == "true" && maze[k][i][j+1]["p"] == "false") || (maze[k][i][j]["p"] == "false" && maze[k][i][j+1]["p"] == "true"))
 						{
-							if(j==maze["c"]-1 && typeof maze[i][j]["l"] !== 'undefined') //link to the next map, don't draw exit.
+							if(j==maze["c"]-1 && typeof maze[k][i][j]["l"] !== 'undefined') //link to the next map, don't draw exit.
 							{ }
 							else
 							{
@@ -525,19 +527,19 @@
 							//
 							//============================
 							vertexPositions.push(parseFloat(j+1)); // X
-							vertexPositions.push(parseFloat(h)); // Y
+							vertexPositions.push(parseFloat(k)); // Y
 							vertexPositions.push(parseFloat((i*-1)-1)); // Z
 							vertexTextureCoords.push(parseFloat(0.0)); // U
 							vertexTextureCoords.push(parseFloat(1.0)); // V
 							
 							vertexPositions.push(parseFloat(j+1)); // X
-							vertexPositions.push(parseFloat(h-1)); // Y
+							vertexPositions.push(parseFloat(k-1)); // Y
 							vertexPositions.push(parseFloat((i*-1)-1)); // Z
 							vertexTextureCoords.push(parseFloat(0.0)); // U
 							vertexTextureCoords.push(parseFloat(0.0)); // V
 							
 							vertexPositions.push(parseFloat(j+1)); // X
-							vertexPositions.push(parseFloat(h-1)); // Y
+							vertexPositions.push(parseFloat(k-1)); // Y
 							vertexPositions.push(parseFloat(i*-1)); // Z
 							vertexTextureCoords.push(parseFloat(1.0)); // U
 							vertexTextureCoords.push(parseFloat(0.0)); // V
@@ -550,19 +552,19 @@
 							//
 							//============================
 							vertexPositions.push(parseFloat(j+1)); // X
-							vertexPositions.push(parseFloat(h)); // Y
+							vertexPositions.push(parseFloat(k)); // Y
 							vertexPositions.push(parseFloat((i*-1)-1)); // Z
 							vertexTextureCoords.push(parseFloat(0.0)); // U
 							vertexTextureCoords.push(parseFloat(1.0)); // V
 							
 							vertexPositions.push(parseFloat(j+1)); // X
-							vertexPositions.push(parseFloat(h)); // Y
+							vertexPositions.push(parseFloat(k)); // Y
 							vertexPositions.push(parseFloat(i*-1)); // Z
 							vertexTextureCoords.push(parseFloat(1.0)); // U
 							vertexTextureCoords.push(parseFloat(1.0)); // V
 							
 							vertexPositions.push(parseFloat(j+1)); // X
-							vertexPositions.push(parseFloat(h-1)); // Y
+							vertexPositions.push(parseFloat(k-1)); // Y
 							vertexPositions.push(parseFloat(i*-1)); // Z
 							vertexTextureCoords.push(parseFloat(1.0)); // U
 							vertexTextureCoords.push(parseFloat(0.0)); // V
@@ -583,19 +585,19 @@
 							//
 							//============================
 							vertexPositions.push(parseFloat(j)); // X
-							vertexPositions.push(parseFloat(h)); // Y
+							vertexPositions.push(parseFloat(k)); // Y
 							vertexPositions.push(parseFloat(i*-1)); // Z
 							vertexTextureCoords.push(parseFloat(0.0)); // U
 							vertexTextureCoords.push(parseFloat(1.0)); // V
 							
 							vertexPositions.push(parseFloat(j)); // X
-							vertexPositions.push(parseFloat(h)); // Y
+							vertexPositions.push(parseFloat(k)); // Y
 							vertexPositions.push(parseFloat((i*-1)-1)); // Z
 							vertexTextureCoords.push(parseFloat(0.0)); // U
 							vertexTextureCoords.push(parseFloat(0.0)); // V
 							
 							vertexPositions.push(parseFloat(j+1)); // X
-							vertexPositions.push(parseFloat(h)); // Y
+							vertexPositions.push(parseFloat(k)); // Y
 							vertexPositions.push(parseFloat((i*-1)-1)); // Z
 							vertexTextureCoords.push(parseFloat(1.0)); // U
 							vertexTextureCoords.push(parseFloat(0.0)); // V
@@ -608,19 +610,19 @@
 							//
 							//============================
 							vertexPositions.push(parseFloat(j)); // X
-							vertexPositions.push(parseFloat(h)); // Y
+							vertexPositions.push(parseFloat(k)); // Y
 							vertexPositions.push(parseFloat(i*-1)); // Z
 							vertexTextureCoords.push(parseFloat(0.0)); // U
 							vertexTextureCoords.push(parseFloat(1.0)); // V
 							
 							vertexPositions.push(parseFloat(j+1)); // X
-							vertexPositions.push(parseFloat(h)); // Y
+							vertexPositions.push(parseFloat(k)); // Y
 							vertexPositions.push(parseFloat(i*-1)); // Z
 							vertexTextureCoords.push(parseFloat(1.0)); // U
 							vertexTextureCoords.push(parseFloat(1.0)); // V
 							
 							vertexPositions.push(parseFloat(j+1)); // X
-							vertexPositions.push(parseFloat(h)); // Y
+							vertexPositions.push(parseFloat(k)); // Y
 							vertexPositions.push(parseFloat((i*-1)-1)); // Z
 							vertexTextureCoords.push(parseFloat(1.0)); // U
 							vertexTextureCoords.push(parseFloat(0.0)); // V
@@ -640,19 +642,19 @@
 							//
 							//============================
 							vertexPositions.push(parseFloat(j)); // X
-							vertexPositions.push(parseFloat(h-1)); // Y
+							vertexPositions.push(parseFloat(k-1)); // Y
 							vertexPositions.push(parseFloat((i*-1)-1)); // Z
 							vertexTextureCoords.push(parseFloat(0.0)); // U
 							vertexTextureCoords.push(parseFloat(1.0)); // V
 							
 							vertexPositions.push(parseFloat(j)); // X
-							vertexPositions.push(parseFloat(h-1)); // Y
+							vertexPositions.push(parseFloat(k-1)); // Y
 							vertexPositions.push(parseFloat(i*-1)); // Z
 							vertexTextureCoords.push(parseFloat(0.0)); // U
 							vertexTextureCoords.push(parseFloat(0.0)); // V
 							
 							vertexPositions.push(parseFloat(j+1)); // X
-							vertexPositions.push(parseFloat(h-1)); // Y
+							vertexPositions.push(parseFloat(k-1)); // Y
 							vertexPositions.push(parseFloat(i*-1)); // Z
 							vertexTextureCoords.push(parseFloat(1.0)); // U
 							vertexTextureCoords.push(parseFloat(0.0)); // V
@@ -665,19 +667,19 @@
 							//
 							//============================
 							vertexPositions.push(parseFloat(j)); // X
-							vertexPositions.push(parseFloat(h-1)); // Y
+							vertexPositions.push(parseFloat(k-1)); // Y
 							vertexPositions.push(parseFloat((i*-1)-1)); // Z
 							vertexTextureCoords.push(parseFloat(0.0)); // U
 							vertexTextureCoords.push(parseFloat(1.0)); // V
 							
 							vertexPositions.push(parseFloat(j+1)); // X
-							vertexPositions.push(parseFloat(h-1)); // Y
+							vertexPositions.push(parseFloat(k-1)); // Y
 							vertexPositions.push(parseFloat((i*-1)-1)); // Z
 							vertexTextureCoords.push(parseFloat(1.0)); // U
 							vertexTextureCoords.push(parseFloat(1.0)); // V
 							
 							vertexPositions.push(parseFloat(j+1)); // X
-							vertexPositions.push(parseFloat(h-1)); // Y
+							vertexPositions.push(parseFloat(k-1)); // Y
 							vertexPositions.push(parseFloat(i*-1)); // Z
 							vertexTextureCoords.push(parseFloat(1.0)); // U
 							vertexTextureCoords.push(parseFloat(0.0)); // V
@@ -751,7 +753,17 @@
 						zPos -= Math.cos(degToRad(yaw)) * speed * elapsed;
 
 						joggingAngle += elapsed * 0.6; // 0.6 "fiddle factor" - makes it feel more realistic :)
-						yPos = Math.sin(degToRad(joggingAngle)) / 20 + 0.4
+						yPos = Math.sin(degToRad(joggingAngle)) / 20 + jogConstant;
+						var position = document.getElementById("mazeContents").innerHTML += '	X: ' + xPos + '  Z: ' + zPos; 
+						var checkX = Math.floor(xPos);
+						var checkZ = -Math.floor(zPos);
+						if(checkX == 4 && checkZ >= 11)
+						{
+							yPos += 1;
+							jogConstant += 1;
+							xPos = 4.5;
+							zPos = 3;
+						}
 					}
 
 					yaw += yawRate * elapsed;
@@ -775,6 +787,7 @@
 
 
 			function tick() {
+				var speedcheck = document.getElementById("mazeContents").innerHTML = 'Speed: ' + speed;
 				requestAnimFrame(tick);
 				handleKeys();
 				drawScene();
