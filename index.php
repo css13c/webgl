@@ -334,7 +334,7 @@
 						//			Front
 						//
 						//============================
-						if(i==maze["r"]-1 || (maze[k][i][j]["p"] == "true" && maze[k][i+1][j]["p"] == "false") || (maze[k][i][j]["p"] == "false" && maze[k][i+1][j]["p"] == "true"))//if outer loop is one from completion, 
+						if(i==maze["r"]-1 || (maze[k][i][j]["p"] == "true" && maze[k][i+1][j]["p"] == "false") || (maze[k][i][j]["p"] == "false" && maze[k][i+1][j]["p"] == "true") || (maze[k][i][j]["u"] == "1" || maze[k][i+1][j]["d"] == "1"))//if outer loop is one from completion, 
 						{
 							if(i==maze["r"]-1 && typeof maze[k][i][j]["l"] !== 'undefined') //link to the next map, don't draw exit.
 							{ }
@@ -515,7 +515,7 @@
 						//			Right
 						//
 						//============================
-						if(j==maze["c"]-1 || (maze[k][i][j]["p"] == "true" && maze[k][i][j+1]["p"] == "false") || (maze[k][i][j]["p"] == "false" && maze[k][i][j+1]["p"] == "true"))
+						if(j==maze["c"]-1 || (maze[k][i][j]["p"] == "true" && maze[k][i][j+1]["p"] == "false") || (maze[k][i][j]["p"] == "false" && maze[k][i][j+1]["p"] == "true") || (maze[k][i][j]["r"] == "1" || maze[k][i][j+1]["t"] == "1"))
 						{
 							if(j==maze["c"]-1 && typeof maze[k][i][j]["l"] !== 'undefined') //link to the next map, don't draw exit.
 							{ }
@@ -745,6 +745,8 @@
 
 			function animate() {
 				var timeNow = new Date().getTime();
+				var checkX = Math.floor(xPos);
+				var checkZ = -Math.floor(zPos);
 				if (lastTime != 0) {
 					var elapsed = timeNow - lastTime;
 
@@ -754,17 +756,16 @@
 
 						joggingAngle += elapsed * 0.6; // 0.6 "fiddle factor" - makes it feel more realistic :)
 						yPos = Math.sin(degToRad(joggingAngle)) / 20 + jogConstant;
-						var position = document.getElementById("mazeContents").innerHTML += '	X: ' + xPos + '  Z: ' + zPos; 
-						var checkX = Math.floor(xPos);
-						var checkZ = -Math.floor(zPos);
-						if(checkX == 4 && checkZ >= 11)
+						if(checkX == 4 && checkZ >= 11 && checkY < 3)
 						{
 							yPos += 1;
 							jogConstant += 1;
+							checkY += 1;
 							xPos = 4.5;
 							zPos = 3;
 						}
 					}
+					var position = document.getElementById("mazeContents").innerHTML += '	X: ' + checkX + '  Z: ' + checkZ; 
 
 					yaw += yawRate * elapsed;
 					pitch += pitchRate * elapsed;
